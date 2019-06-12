@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-
+# Making/editting connections
 
 # package_dir
 _package_dir = os.path.dirname(os.path.realpath(__file__))
@@ -566,7 +566,7 @@ def describeBG(**kwargs):
               'M1STR': 0.5,
               'CxTh': 0.2,
               'STNExtFreq': 4.0,
-              'rampingCTX': False}
+              'rampingCTX': False} #Can be made true for future uses
 
     # makePop(name, receptors=[], data={}, data_overrides={})
 
@@ -581,14 +581,14 @@ def describeBG(**kwargs):
     GABA = makeReceptor('GABA', {'Tau': 5, 'RevPot': -70})
     AMPA = makeReceptor('AMPA', {'Tau': 2, 'RevPot': 0})
     NMDA = makeReceptor('NMDA', {'Tau': 100, 'RevPot': 0})
-
+    #This is where to add new receptor types
     LIP = makePop("LIP", [GABA, [AMPA, 800, 2.8, 2.2], NMDA], cd_pre, {'N': 680, 'dpmn_cortex': 1})
-
-    camP(c, 'LIP', 'D1STR', ['AMPA', 'NMDA'], ['syn'], 0.045, [config['CxSTR'], config['CxSTR']], name='cxd')
-    camP(c, 'LIP', 'D2STR',  ['AMPA', 'NMDA'], ['syn'], 0.045, [config['CxSTR'], config['CxSTR']], name='cxi')
+    #syn --> within channel, anti--> across channel
+    camP(c, 'LIP', 'D1STR', ['AMPA', 'NMDA'], ['syn'], 0.045, [config['CxSTR'], config['CxSTR']], name='cxd') #c = python list of connections
+    camP(c, 'LIP', 'D2STR',  ['AMPA', 'NMDA'], ['syn'], 0.045, [config['CxSTR'], config['CxSTR']], name='cxi') #0.045 --> connectivity probability
     camP(c, 'LIP', 'FSI', 'AMPA', ['all'], 0.45, config['CxFSI'], name='cxfsi')
     camP(c, 'LIP', 'Th', ['AMPA', 'NMDA'], ['all'], 0.035, [config['CxTh'], config['CxTh']])
-
+    #Creates population connectivity matrix
     D1STR = makePop("D1STR", [GABA, [AMPA, 800, 4., 1.3], NMDA], cd_pre, getD1CellDefaults())
     camP(c, 'D1STR', 'D1STR', 'GABA', ['syn'], .0485, .28)
     camP(c, 'D1STR', 'D2STR', 'GABA', ['syn'], .0135, .28)
@@ -624,8 +624,8 @@ def describeBG(**kwargs):
     camP(c, 'Th', 'D2STR', 'AMPA', ['syn'], 0.045, config['ThSTR'])
     camP(c, 'Th', 'FSI', 'AMPA', ['all'], 0.025, config['ThSTR'])
     camP(c, 'Th', 'LIP', 'NMDA', ['all'], 0.025, config['ThCx'], name='thcx')
-
-    action_channel = makeChannel('choices', [GPi, STNE, GPeP, D1STR, D2STR, LIP, Th])
+    #FSI,LIP --> inhibitory population neurons
+    action_channel = makeChannel('choices', [GPi, STNE, GPeP, D1STR, D2STR, LIP, Th]) #Makes action channel 
 
     ineuronPops = [FSI]
 
@@ -647,9 +647,9 @@ def describeBG(**kwargs):
 
 def mcInfo(**kwargs):
 
-    config = {'BaseStim': 2.0,
-              'WrongStim': 2.50,
-              'RightStim': 2.50,
+    config = {'BaseStim': 2.0, #Input
+              'WrongStim': 2.50, #Receiving incorrect option
+              'RightStim': 2.50, #Receiving correct option
               'Start': 500,
               'Choices': 2,
               'Dynamic': 30}
@@ -665,10 +665,10 @@ def mcInfo(**kwargs):
     hts.append(makeHandle('threshold', 'STNE', ['choices'], 'AMPA', 800, 1.65))
     hts.append(makeHandle('out', 'Th', ['choices']))
 
-    hes = []
+    hes = [] #Defines list of events occuring
     houts = []
-    for i in range(0,2):
-        hes.append(makeHandleEvent('reset', 0, 'sensory', [], config['BaseStim']))
+    for i in range(0,2): #Does this twice (two decisions), can be scaled up to 600
+        hes.append(makeHandleEvent('reset', 0, 'sensory', [], config['BaseStim'])) #Making two events
         hes.append(makeHandleEvent('wrong stimulus', config['Start'], 'sensory', [], config['WrongStim']+0.0025*((i+1)%2)))
         hes.append(makeHandleEvent('right stimulus', config['Start'], 'sensory', [0], config['RightStim']+0.0025*(i%2)))
         hes.append(makeHandleEvent('hyperdirect', config['Start'], 'threshold', [], config['STNExtFreq']+.75))
@@ -686,7 +686,7 @@ def mcInfo(**kwargs):
     return (dims, hts, hes, houts)
 
 
-def ssInfo(**kwargs):
+def ssInfo(**kwargs): #stop signal tasks
 
     config = {'BaseStim': 2.0,
               'WrongStim': 2.50,

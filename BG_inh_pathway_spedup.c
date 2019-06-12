@@ -528,8 +528,8 @@ int ReceptorCode(char *s,int p)
 #define EXC 0
 #define INH 1
 
-
-int DescribeNetwork() {
+//Reads in network config file, object descriptions of population
+int DescribeNetwork() { // Reads in file
   FILE* devconf;
   char buf[1000], *s, *es;
   int currentpopflag = 0;
@@ -922,7 +922,7 @@ int DescribeNetwork() {
 // Parse protocol
 // -------------------------------------------------------------------------------------
 
-int ParseProtocol() {
+int ParseProtocol() { // Important line for parsing
   FILE *devprot;
   char buf[1000], *s, *es;
   int eventflag = 0;
@@ -1109,7 +1109,7 @@ int ParseProtocol() {
 // network. PopD is initialized in DescribeNetwork.
 // ======================================================================================
 
-int GenerateNetwork() {
+int GenerateNetwork() { // Takes population descriptions, makes network, array of neurons
   int p, i, j, r, tp, tpi, tn, k, rd, na;
   int ni[MAXTN], tpni[MAXTN], trni[MAXTN];
   float eff[MAXTN], ts[MAXTN], timets[MAXTN], D[MAXTN], pv[MAXTN], tauD[MAXTN],
@@ -1272,7 +1272,7 @@ int GenerateNetwork() {
             if (i == tn) continue;  // avoid self connections
           }
 
-          if (drand49() <
+          if (drand49() < // loops through neurons, decides to make decisions or not
               PopD[p].SynP[tpi].Connectivity) {  // the connection exists
             ni[na] = tn;                         // target neuron
             tpni[na] = tp;                       // target population
@@ -1333,7 +1333,7 @@ int GenerateNetwork() {
 // (to change the network from trial to trial, the only way is to start again with a different seed)
 // This function is not used anymore in the current version.
 
-int InitializeNetwork() {
+int InitializeNetwork() { // DONT USE THIS FUNCTION, USE GenerateNetwork
   int p, i, j, r, tp, tpi, tn, k, rd, na;
   int ni[MAXTN], tpni[MAXTN], trni[MAXTN];
   float eff[MAXTN], ts[MAXTN], timets[MAXTN];
@@ -1425,7 +1425,7 @@ $$ {dS \over dt} = -S \over \tau+\sum_k \alpha (1-s_k)w_k \delta(t-t^k_j)$$
 
 // float current_freq;
 
-int SimulateOneTimeStep() {
+int SimulateOneTimeStep() { // Most of editting goes here!!
   int aux;
   int p, i, j, r, sourceneuron;
   int tn, tp, tr;
@@ -1706,7 +1706,7 @@ int SimulateOneTimeStep() {
           // equation 5 term 2
           Pop[p].Cell[i].dpmn_DAp -= dt * Pop[p].Cell[i].dpmn_DAp / Pop[p].Cell[i].dpmn_tauDOP;
           // equation 5 term 1, the learning step
-          if (rewardflag && Time >= dpmn_RewardTime) {
+          if (rewardflag && Time >= dpmn_RewardTime) { // Reward is applied here!!
             // report("dpmn type %d\n", Pop[p].Cell[i].dpmn_type);
             if (rewardflag == 1) {
               DAinc = EndingEvent.RewardVal - Pop[p].Cell[i].dpmn_Q1;
@@ -1727,7 +1727,7 @@ int SimulateOneTimeStep() {
         //    report("test\n");
           //}
           // equation 3
-          Pop[p].Cell[i].dpmn_E += dt * (Pop[p].Cell[i].dpmn_XPOST * Pop[p].Cell[i].dpmn_APRE
+          Pop[p].Cell[i].dpmn_E += dt * (Pop[p].Cell[i].dpmn_XPOST * Pop[p].Cell[i].dpmn_APRE // Adjusting & repeating eligibility over time
                               - Pop[p].Cell[i].dpmn_XPRE * Pop[p].Cell[i].dpmn_APOST - Pop[p].Cell[i].dpmn_E)
                         / Pop[p].Cell[i].dpmn_tauE;
           // calculate DA (total dopamine)
@@ -2336,7 +2336,7 @@ int SaveTraces() {
 // Handle event
 // -------------------------------------------------------------------------------------------------------------------
 
-int HandleEvent(void) {
+int HandleEvent(void) { // When event occurs (makes happen)
   int i, p, r, q, j;
   float efficacy, MeanEff;
 
@@ -2431,7 +2431,7 @@ int HandleEvent(void) {
 }
 
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[]) // Does everything in order
 {
   int ti,runflag,tistepforsaving,rseed;
   long iseed;
