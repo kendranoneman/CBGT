@@ -1,3 +1,5 @@
+#Defines sequence of events and thresholds
+#Stages adding event times and absolute time stamps (relative to stage)
 
 EventTime 0
 
