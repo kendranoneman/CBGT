@@ -767,7 +767,7 @@ def configureExperiment(**kwargs):
     poppaths = constructPopPaths(brain)
     popcopylist = constructPopCopies(dims, brain, poppaths)
 
-    # modify network
+    # modify network (produce asym between L/R connectivity of network)
     modifyNetwork(popcopylist, connections, **kwargs)
 
     # create all network connections
